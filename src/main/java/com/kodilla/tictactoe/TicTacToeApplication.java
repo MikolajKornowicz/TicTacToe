@@ -2,6 +2,7 @@ package com.kodilla.tictactoe;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -10,6 +11,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javafx.scene.layout.BorderWidths.AUTO;
 
 
@@ -17,9 +21,10 @@ public class TicTacToeApplication extends Application {
     private final Image bgImage = new Image("file:src/main/resources/background.jpg");
     private final Image x = new Image("file:src/main/resources/x2.jpg");
     private final Image o = new Image("file:src/main/resources/o2.jpg");
-    private final ImageView xView = new ImageView(x);
-    private final ImageView oView = new ImageView(o);
     private boolean isX = true;
+    private Label status = new Label();
+    private List<Button> buttonList = new ArrayList<>();
+
 
     public static void main(String[] args) {
         launch(args);
@@ -58,10 +63,6 @@ public class TicTacToeApplication extends Application {
         row5.setPrefHeight(200);
         grid.getRowConstraints().addAll(row1,row2,row3,row4,row5);
 
-        xView.setFitHeight(200);
-        xView.setFitWidth(200);
-        oView.setFitHeight(200);
-        oView.setFitWidth(200);
 
         for(int i = 0; i < 3; i ++){
             for (int j = 0; j <3; j++) {
@@ -70,27 +71,24 @@ public class TicTacToeApplication extends Application {
                 button.setPrefSize(450,450);
                 button.setOnAction(event -> {
                     if(isX){
+                        ImageView xView = new ImageView(x);
+                        xView.setFitHeight(200);
+                        xView.setFitWidth(200);
                         button.setGraphic(xView);
                     } else {
+                        ImageView oView = new ImageView(o);
+                        oView.setFitHeight(200);
+                        oView.setFitWidth(200);
                         button.setGraphic(oView);
                     }
                     isX = !isX;
                     button.setDisable(true);
-                    if(grid.getCellBounds(2,2).equals(xView) && grid.getCellBounds(2,3).equals(xView) && grid.getCellBounds(2,4).equals(xView) ||
-                    grid.getCellBounds(3,2).equals(xView) && grid.getCellBounds(3,3).equals(xView) && grid.getCellBounds(3,4).equals(xView) ||
-                            grid.getCellBounds(4,2).equals(xView) && grid.getCellBounds(4,3).equals(xView) && grid.getCellBounds(4,4).equals(xView) ||
-                            grid.getCellBounds(2,2).equals(oView) && grid.getCellBounds(2,3).equals(oView) && grid.getCellBounds(2,4).equals(oView) ||
-                            grid.getCellBounds(3,2).equals(oView) && grid.getCellBounds(3,3).equals(oView) && grid.getCellBounds(3,4).equals(oView) ||
-                            grid.getCellBounds(4,2).equals(oView) && grid.getCellBounds(4,3).equals(oView) && grid.getCellBounds(4,4).equals(oView) ||
-                            grid.getCellBounds(2,2).equals(oView) && grid.getCellBounds(3,3).equals(oView) && grid.getCellBounds(4,4).equals(oView) ||
-                            grid.getCellBounds(2,4).equals(oView) && grid.getCellBounds(3,3).equals(oView) && grid.getCellBounds(4,2).equals(oView) ||
-                            grid.getCellBounds(2,2).equals(xView) && grid.getCellBounds(3,3).equals(xView) && grid.getCellBounds(4,4).equals(xView) ||
-                            grid.getCellBounds(2,4).equals(xView) && grid.getCellBounds(3,3).equals(xView) && grid.getCellBounds(4,2).equals(xView)) {
-                        System.out.println("You won");
-                    }
+                    checkWin();
+
 
                 });
                 grid.add(button, i+1, j+1);
+                buttonList.add(button);
             }
         }
 
@@ -102,5 +100,70 @@ public class TicTacToeApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+    }
+    private void cpuMove (){
+
+    }
+
+    private void checkWin (){
+        boolean isHorizontalWinner = checkHorizontal();
+        boolean isVerticalWinner = checkVertical();
+        boolean isDiagonalWinner = chekDiagonal();
+
+        if(isHorizontalWinner || isVerticalWinner || isDiagonalWinner ){
+            buttonList.forEach(button -> button.setDisable(true));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Winner");
+            alert.setHeaderText(null);
+            alert.setContentText("I have a great message for you! You won");
+
+            alert.showAndWait();
+        }
+    }
+
+    private boolean chekDiagonal() {
+        ImageView b1 =(ImageView) buttonList.get(0).getGraphic();
+        ImageView b2 =(ImageView) buttonList.get(4).getGraphic();
+        ImageView b3 =(ImageView) buttonList.get(8).getGraphic();
+        ImageView b4=(ImageView) buttonList.get(6).getGraphic();
+        ImageView b5 =(ImageView) buttonList.get(2).getGraphic();
+        if(b1 != null && b2 != null && b3 != null){
+            if(b1.getImage().equals(b2.getImage())&&b2.getImage().equals(b3.getImage())||
+                    b4.getImage().equals(b2.getImage())&&b2.getImage().equals(b5.getImage())){
+                System.out.println("Win");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkVertical() {
+        for(int i=0; i<3; i++){
+            ImageView b1 =(ImageView) buttonList.get(i).getGraphic();
+            ImageView b2 =(ImageView) buttonList.get(i+3).getGraphic();
+            ImageView b3 =(ImageView) buttonList.get(i+6).getGraphic();
+            if(b1 != null && b2 != null && b3 != null){
+                if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage())){
+                    System.out.println("Winner");
+                    return true;
+                }
+            }
+        }
+return false;
+    }
+
+    private boolean checkHorizontal() {
+        for(int i=0; i<9; i = i + 3){
+            ImageView b1 =(ImageView) buttonList.get(i).getGraphic();
+            ImageView b2 =(ImageView) buttonList.get(i+1).getGraphic();
+            ImageView b3 =(ImageView) buttonList.get(i+2).getGraphic();
+            if(b1 != null && b2 != null && b3 != null){
+                if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage())){
+                    System.out.println("Winner");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
