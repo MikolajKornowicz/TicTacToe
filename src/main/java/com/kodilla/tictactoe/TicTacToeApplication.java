@@ -19,8 +19,8 @@ import static javafx.scene.layout.BorderWidths.AUTO;
 
 public class TicTacToeApplication extends Application {
     private final Image bgImage = new Image("file:src/main/resources/background.jpg");
-    private final Image x = new Image("file:src/main/resources/x2.jpg");
-    private final Image o = new Image("file:src/main/resources/o2.jpg");
+    private final Image x = new Image("file:src/main/resources/pngX.png");
+    private final Image o = new Image("file:src/main/resources/pngO.png");
     private boolean isX = true;
     private Label status = new Label();
     private List<Button> buttonList = new ArrayList<>();
@@ -84,6 +84,7 @@ public class TicTacToeApplication extends Application {
                     isX = !isX;
                     button.setDisable(true);
                     checkWin();
+                    checkLoose();
 
 
                 });
@@ -92,7 +93,7 @@ public class TicTacToeApplication extends Application {
             }
         }
 
-        grid.setGridLinesVisible(true);
+        grid.setGridLinesVisible(false);
 
         Scene scene = new Scene(grid, 1600, 900, Color.BLACK);
 
@@ -113,12 +114,41 @@ public class TicTacToeApplication extends Application {
         if(isHorizontalWinner || isVerticalWinner || isDiagonalWinner ){
             buttonList.forEach(button -> button.setDisable(true));
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Winner");
-            alert.setHeaderText(null);
-            alert.setContentText("I have a great message for you! You won");
-
+            alert.setTitle("Game won");
+            alert.setHeaderText("Congratulation!");
+            alert.setContentText("You won!");
             alert.showAndWait();
         }
+    }
+private void checkLoose () {
+    boolean isHorizontalWinner = checkHorizontal();
+    boolean isVerticalWinner = checkVertical();
+    boolean isDiagonalWinner = chekDiagonal();
+    boolean ifAllMarked = ifChecked();
+        if (!isHorizontalWinner && !isVerticalWinner && !isDiagonalWinner && ifAllMarked){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Game lost! There are no draws.");
+            alert.setHeaderText("Ha Ha Ha");
+            alert.setContentText("Loooooosers!");
+            alert.showAndWait();
+        }
+}
+
+    private boolean ifChecked() {
+        ImageView b1 =(ImageView) buttonList.get(0).getGraphic();
+        ImageView b2 =(ImageView) buttonList.get(1).getGraphic();
+        ImageView b3 =(ImageView) buttonList.get(2).getGraphic();
+        ImageView b4=(ImageView) buttonList.get(3).getGraphic();
+        ImageView b5 =(ImageView) buttonList.get(4).getGraphic();
+        ImageView b6 =(ImageView) buttonList.get(5).getGraphic();
+        ImageView b7 =(ImageView) buttonList.get(6).getGraphic();
+        ImageView b8=(ImageView) buttonList.get(7).getGraphic();
+        ImageView b9=(ImageView) buttonList.get(8).getGraphic();
+
+        if(b1 != null && b2 != null && b3 != null && b4 != null && b5 != null && b6 != null && b7 != null && b8 != null && b9 != null){
+            return true;
+        }
+        return false;
     }
 
     private boolean chekDiagonal() {
@@ -127,10 +157,10 @@ public class TicTacToeApplication extends Application {
         ImageView b3 =(ImageView) buttonList.get(8).getGraphic();
         ImageView b4=(ImageView) buttonList.get(6).getGraphic();
         ImageView b5 =(ImageView) buttonList.get(2).getGraphic();
-        if(b1 != null && b2 != null && b3 != null){
-            if(b1.getImage().equals(b2.getImage())&&b2.getImage().equals(b3.getImage())||
-                    b4.getImage().equals(b2.getImage())&&b2.getImage().equals(b5.getImage())){
-                System.out.println("Win");
+        if(b1 != null && b2 != null && b3 != null || b2 != null && b4 != null && b5 != null){
+            if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage()) ||
+                    b4.getImage().equals(b2.getImage()) && b2.getImage().equals(b5.getImage())){
+                System.out.println("Diagonal Win");
                 return true;
             }
         }
@@ -144,7 +174,7 @@ public class TicTacToeApplication extends Application {
             ImageView b3 =(ImageView) buttonList.get(i+6).getGraphic();
             if(b1 != null && b2 != null && b3 != null){
                 if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage())){
-                    System.out.println("Winner");
+                    System.out.println(" Vertical Winner");
                     return true;
                 }
             }
@@ -159,7 +189,7 @@ return false;
             ImageView b3 =(ImageView) buttonList.get(i+2).getGraphic();
             if(b1 != null && b2 != null && b3 != null){
                 if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage())){
-                    System.out.println("Winner");
+                    System.out.println("Horizontal Winner");
                     return true;
                 }
             }
