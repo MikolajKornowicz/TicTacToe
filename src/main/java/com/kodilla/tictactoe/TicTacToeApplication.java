@@ -78,6 +78,7 @@ public class TicTacToeApplication extends Application {
         newGame.setOnAction(event -> {
             buttonList.forEach(button -> button.setGraphic(null));
             buttonList.forEach(button -> button.setDisable(false));
+            isX = true;
         });
 
         Button save = new Button();
