@@ -13,8 +13,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static javafx.scene.layout.BorderWidths.AUTO;
+import java.util.Random;
 
 
 public class TicTacToeApplication extends Application {
@@ -24,6 +23,7 @@ public class TicTacToeApplication extends Application {
     private boolean isX = true;
     private Label status = new Label();
     private List<Button> buttonList = new ArrayList<>();
+    private boolean computerTurn = false;
 
 
     public static void main(String[] args) {
@@ -84,12 +84,15 @@ public class TicTacToeApplication extends Application {
                     isX = !isX;
                     button.setDisable(true);
                     checkWin();
-                    checkLoose();
-
-
+                    checkDraw();
+                    computerTurn = true;
+                    cpuMove();
+                    checkWin();
+                    checkDraw();
                 });
                 grid.add(button, i+1, j+1);
                 buttonList.add(button);
+
             }
         }
 
@@ -102,9 +105,29 @@ public class TicTacToeApplication extends Application {
         primaryStage.show();
 
     }
-    private void cpuMove (){
-
-    }
+    private void cpuMove () {
+        if (computerTurn) {
+            Random random = new Random();
+            int computerPicks = random.nextInt(9);
+            System.out.println("clean: " + computerPicks);
+            ImageView computerSquare = (ImageView) buttonList.get(computerPicks).getGraphic();
+            if(computerSquare == null) {
+                Button buttonToFire = buttonList.get(computerPicks);
+                buttonToFire.fire();
+                computerTurn = false;
+            }
+            if (computerSquare != null) {
+                while (computerSquare != null) {
+                    computerPicks = random.nextInt(9);
+                    computerSquare = (ImageView) buttonList.get(computerPicks).getGraphic();
+                    System.out.println("Loop: " + computerPicks);
+                }
+                Button buttonToFire = buttonList.get(computerPicks);
+                buttonToFire.fire();
+                computerTurn = false;
+            }
+            }
+        }
 
     private void checkWin (){
         boolean isHorizontalWinner = checkHorizontal();
@@ -114,22 +137,26 @@ public class TicTacToeApplication extends Application {
         if(isHorizontalWinner || isVerticalWinner || isDiagonalWinner ){
             buttonList.forEach(button -> button.setDisable(true));
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game won");
+            if(!isX){
+            alert.setTitle("X won");
+            } else {
+                alert.setTitle("O won");
+            }
             alert.setHeaderText("Congratulation!");
             alert.setContentText("You won!");
             alert.showAndWait();
         }
     }
-private void checkLoose () {
+private void checkDraw() {
     boolean isHorizontalWinner = checkHorizontal();
     boolean isVerticalWinner = checkVertical();
     boolean isDiagonalWinner = chekDiagonal();
     boolean ifAllMarked = ifChecked();
         if (!isHorizontalWinner && !isVerticalWinner && !isDiagonalWinner && ifAllMarked){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game lost! There are no draws.");
-            alert.setHeaderText("Ha Ha Ha");
-            alert.setContentText("Loooooosers!");
+            alert.setTitle("Draw");
+            alert.setHeaderText("Better luck next time!");
+            alert.setContentText("Try again!");
             alert.showAndWait();
         }
 }
