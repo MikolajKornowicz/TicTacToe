@@ -75,6 +75,10 @@ public class TicTacToeApplication extends Application {
         newGame.setPrefSize(100, 100);
         newGame.setText("New Game");
         grid.add(newGame, 5,0 );
+        newGame.setOnAction(event -> {
+            buttonList.forEach(button -> button.setGraphic(null));
+            buttonList.forEach(button -> button.setDisable(false));
+        });
 
         Button save = new Button();
         save.setStyle("-fx-background-color: white;");
