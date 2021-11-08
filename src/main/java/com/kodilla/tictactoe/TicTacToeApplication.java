@@ -24,6 +24,12 @@ public class TicTacToeApplication extends Application {
     private Label status = new Label();
     private List<Button> buttonList = new ArrayList<>();
     private boolean computerTurn = false;
+    private String singleString = "Single Player";
+    private String multiString = "Multi Player";
+    private String easyMode = "Easy Mode";
+    private String HardMode = "Hard Mode";
+    private String disabled = "Disabled";
+    private boolean gameType = true;
 
 
     public static void main(String[] args) {
@@ -64,6 +70,56 @@ public class TicTacToeApplication extends Application {
         grid.getRowConstraints().addAll(row1,row2,row3,row4,row5);
 
 
+        Button newGame = new Button();
+        newGame.setStyle("-fx-background-color: white;");
+        newGame.setPrefSize(100, 100);
+        newGame.setText("New Game");
+        grid.add(newGame, 5,0 );
+
+        Button save = new Button();
+        save.setStyle("-fx-background-color: white;");
+        save.setPrefSize(100, 100);
+        save.setText("Save Game");
+        grid.add(save, 5,1 );
+
+        Button mode = new Button();
+        mode.setStyle("-fx-background-color: white;");
+        mode.setPrefSize(100, 100);
+        mode.setText(easyMode);
+        mode.setOnAction(event -> {
+            String activeString = mode.getText();
+            if (activeString.equals(easyMode)) {
+                mode.setText(HardMode);
+            }
+            if (activeString.equals(HardMode)) {
+                mode.setText(easyMode);
+            }
+        });
+        grid.add(mode, 5,3 );
+
+        Button type = new Button();
+        type.setStyle("-fx-background-color: white;");
+        type.setPrefSize(100, 100);
+        type.setText(singleString);
+        type.setOnAction(event -> {
+            String activeString = type.getText();
+            if(activeString.equals(singleString)){
+                type.setText(multiString);
+                mode.setText(disabled);
+                mode.setDisable(true);
+                gameType = false;
+            }
+            if(activeString.equals(multiString)){
+                type.setText(singleString);
+                mode.setText(easyMode);
+                mode.setDisable(false);
+                gameType = true;
+            }
+        });
+        grid.add(type, 5,2 );
+
+
+
         for(int i = 0; i < 3; i ++){
             for (int j = 0; j <3; j++) {
                 Button button = new Button();
@@ -89,6 +145,7 @@ public class TicTacToeApplication extends Application {
                     cpuMove();
                     checkWin();
                     checkDraw();
+
                 });
                 grid.add(button, i+1, j+1);
                 buttonList.add(button);
@@ -106,21 +163,20 @@ public class TicTacToeApplication extends Application {
 
     }
     private void cpuMove () {
-        if (computerTurn) {
+        if (computerTurn && !gameType) {
+            boolean allChecked = ifChecked();
             Random random = new Random();
             int computerPicks = random.nextInt(9);
-            System.out.println("clean: " + computerPicks);
             ImageView computerSquare = (ImageView) buttonList.get(computerPicks).getGraphic();
-            if(computerSquare == null) {
+            if(computerSquare == null && !allChecked) {
                 Button buttonToFire = buttonList.get(computerPicks);
                 buttonToFire.fire();
                 computerTurn = false;
             }
-            if (computerSquare != null) {
+            if (computerSquare != null && !allChecked ) {
                 while (computerSquare != null) {
                     computerPicks = random.nextInt(9);
                     computerSquare = (ImageView) buttonList.get(computerPicks).getGraphic();
-                    System.out.println("Loop: " + computerPicks);
                 }
                 Button buttonToFire = buttonList.get(computerPicks);
                 buttonToFire.fire();
