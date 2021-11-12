@@ -1,10 +1,10 @@
 package com.kodilla.tictactoe;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,15 +22,14 @@ public class TicTacToeApplication extends Application {
     private final Image x = new Image("file:src/main/resources/pngX.png");
     private final Image o = new Image("file:src/main/resources/pngO.png");
     private boolean isX = true;
-    private Label status = new Label();
     private List<Button> buttonList = new ArrayList<>();
-    private boolean computerTurn = false;
-    private String singleString = "Single Player";
-    private String multiString = "Multi Player";
-    private String easyMode = "Easy Mode";
-    private String HardMode = "Hard Mode";
-    private String disabled = "Disabled";
-    private boolean gameType = true;
+    private final String singleString = "Single Player";
+    private final String multiString = "Multi Player";
+    private final String easyMode = "Easy Mode";
+    private final String HardMode = "Hard Mode";
+    private final String disabled = "Disabled";
+    private boolean singlePlayer = true;
+    private List <Button> emptyButton = new LinkedList<>();
 
 
     public static void main(String[] args) {
@@ -76,9 +76,17 @@ public class TicTacToeApplication extends Application {
         newGame.setText("New Game");
         grid.add(newGame, 5,0 );
         newGame.setOnAction(event -> {
-            buttonList.forEach(button -> button.setGraphic(null));
-            buttonList.forEach(button -> button.setDisable(false));
-            isX = true;
+            primaryStage.close();
+            Platform.runLater(() -> {
+                try {
+                    isX = true;
+                    emptyButton = new LinkedList<>();
+                    buttonList = new ArrayList<>();
+                    start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         Button save = new Button();
@@ -112,13 +120,13 @@ public class TicTacToeApplication extends Application {
                 type.setText(multiString);
                 mode.setText(disabled);
                 mode.setDisable(true);
-                gameType = false;
+                singlePlayer = false;
             }
             if(activeString.equals(multiString)){
                 type.setText(singleString);
                 mode.setText(easyMode);
                 mode.setDisable(false);
-                gameType = true;
+                singlePlayer = true;
             }
         });
         grid.add(type, 5,2 );
@@ -144,16 +152,15 @@ public class TicTacToeApplication extends Application {
                     }
                     isX = !isX;
                     button.setDisable(true);
+                    emptyButton.remove(button);
                     checkWin();
                     checkDraw();
-                    computerTurn = true;
                     cpuMove();
-                    checkWin();
-                    checkDraw();
 
                 });
                 grid.add(button, i+1, j+1);
                 buttonList.add(button);
+                emptyButton.add(button);
 
             }
         }
@@ -168,27 +175,13 @@ public class TicTacToeApplication extends Application {
 
     }
     private void cpuMove () {
-        if (computerTurn && !gameType) {
-            boolean allChecked = ifChecked();
+        if (!isX && !singlePlayer) {
             Random random = new Random();
-            int computerPicks = random.nextInt(9);
-            ImageView computerSquare = (ImageView) buttonList.get(computerPicks).getGraphic();
-            if(computerSquare == null && !allChecked) {
-                Button buttonToFire = buttonList.get(computerPicks);
-                buttonToFire.fire();
-                computerTurn = false;
-            }
-            if (computerSquare != null && !allChecked ) {
-                while (computerSquare != null) {
-                    computerPicks = random.nextInt(9);
-                    computerSquare = (ImageView) buttonList.get(computerPicks).getGraphic();
-                }
-                Button buttonToFire = buttonList.get(computerPicks);
-                buttonToFire.fire();
-                computerTurn = false;
-            }
-            }
+            int index = random.nextInt(emptyButton.size());
+            Button buttonToFire = emptyButton.get(index);
+            buttonToFire.fire();
         }
+    }
 
     private void checkWin (){
         boolean isHorizontalWinner = checkHorizontal();
@@ -223,17 +216,9 @@ private void checkDraw() {
 }
 
     private boolean ifChecked() {
-        ImageView b1 =(ImageView) buttonList.get(0).getGraphic();
-        ImageView b2 =(ImageView) buttonList.get(1).getGraphic();
-        ImageView b3 =(ImageView) buttonList.get(2).getGraphic();
-        ImageView b4=(ImageView) buttonList.get(3).getGraphic();
-        ImageView b5 =(ImageView) buttonList.get(4).getGraphic();
-        ImageView b6 =(ImageView) buttonList.get(5).getGraphic();
-        ImageView b7 =(ImageView) buttonList.get(6).getGraphic();
-        ImageView b8=(ImageView) buttonList.get(7).getGraphic();
-        ImageView b9=(ImageView) buttonList.get(8).getGraphic();
+     int full = emptyButton.size();
 
-        if(b1 != null && b2 != null && b3 != null && b4 != null && b5 != null && b6 != null && b7 != null && b8 != null && b9 != null){
+        if(full == 0){
             return true;
         }
         return false;
@@ -245,9 +230,13 @@ private void checkDraw() {
         ImageView b3 =(ImageView) buttonList.get(8).getGraphic();
         ImageView b4=(ImageView) buttonList.get(6).getGraphic();
         ImageView b5 =(ImageView) buttonList.get(2).getGraphic();
-        if(b1 != null && b2 != null && b3 != null || b2 != null && b4 != null && b5 != null){
-            if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage()) ||
-                    b4.getImage().equals(b2.getImage()) && b2.getImage().equals(b5.getImage())){
+        if(b1 != null && b2 != null && b3 != null){
+            if(b1.getImage().equals(b2.getImage())&& b2.getImage().equals(b3.getImage())){
+                System.out.println("Diagonal Win");
+                return true;
+            }
+        }       if(b2 != null && b4 != null && b5 != null){
+            if(b4.getImage().equals(b2.getImage()) && b2.getImage().equals(b5.getImage())){
                 System.out.println("Diagonal Win");
                 return true;
             }
