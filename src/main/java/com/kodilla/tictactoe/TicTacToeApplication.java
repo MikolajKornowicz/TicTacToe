@@ -28,7 +28,7 @@ public class TicTacToeApplication extends Application {
     private final String easyMode = "Easy Mode";
     private final String HardMode = "Hard Mode";
     private final String disabled = "Disabled";
-    private boolean singlePlayer = true;
+    private boolean singlePlayer = false;
     private List <Button> emptyButton = new LinkedList<>();
 
 
@@ -82,6 +82,7 @@ public class TicTacToeApplication extends Application {
                     isX = true;
                     emptyButton = new LinkedList<>();
                     buttonList = new ArrayList<>();
+                    singlePlayer = false;
                     start(new Stage());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -98,7 +99,8 @@ public class TicTacToeApplication extends Application {
         Button mode = new Button();
         mode.setStyle("-fx-background-color: white;");
         mode.setPrefSize(100, 100);
-        mode.setText(easyMode);
+        mode.setDisable(true);
+        mode.setText(disabled);
         mode.setOnAction(event -> {
             String activeString = mode.getText();
             if (activeString.equals(easyMode)) {
@@ -113,20 +115,20 @@ public class TicTacToeApplication extends Application {
         Button type = new Button();
         type.setStyle("-fx-background-color: white;");
         type.setPrefSize(100, 100);
-        type.setText(singleString);
+        type.setText(multiString);
         type.setOnAction(event -> {
             String activeString = type.getText();
-            if(activeString.equals(singleString)){
-                type.setText(multiString);
-                mode.setText(disabled);
-                mode.setDisable(true);
-                singlePlayer = false;
-            }
             if(activeString.equals(multiString)){
                 type.setText(singleString);
                 mode.setText(easyMode);
                 mode.setDisable(false);
                 singlePlayer = true;
+            }
+            if(activeString.equals(singleString)){
+                type.setText(multiString);
+                mode.setText(disabled);
+                mode.setDisable(true);
+                singlePlayer = false;
             }
         });
         grid.add(type, 5,2 );
@@ -175,13 +177,14 @@ public class TicTacToeApplication extends Application {
 
     }
     private void cpuMove () {
-        if (!isX && !singlePlayer) {
+        if (!isX && singlePlayer) {
             Random random = new Random();
             int index = random.nextInt(emptyButton.size());
             Button buttonToFire = emptyButton.get(index);
             buttonToFire.fire();
         }
     }
+
 
     private void checkWin (){
         boolean isHorizontalWinner = checkHorizontal();
