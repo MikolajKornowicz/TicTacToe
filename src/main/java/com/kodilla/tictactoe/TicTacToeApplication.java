@@ -173,6 +173,7 @@ public class TicTacToeApplication extends Application {
                     cpuHard();
 
 
+
                 });
                 grid.add(button, i+1, j+1);
                 buttonList.add(button);
@@ -260,10 +261,6 @@ public void cpuHard () {
         if (!isX) {
             if (hard) {
                 checker();
-
-                checkChanceVertically();
-                checkChanceDiagonal();
-                checkChanceHorizontally();
 
 
                 ImageView b0 = (ImageView) buttonList.get(0).getGraphic();
@@ -369,11 +366,20 @@ public void cpuHard () {
                         buttonList.get(6).fire();
                     }
                 }
-                if(edge.size() == 2){
+                if(move ==3 && edge.size() == 2){
                     buttonList.get(3).fire();
                 }
-
+                if(b2 != null && b8 != null && b5 == null){
+                    if(b2.getImage().equals(b8.getImage())){
+                        buttonList.get(5).fire();
+                    }
                 }
+
+                checkChanceVertically();
+                checkChanceDiagonal();
+                checkChanceHorizontally();
+
+            }
             }
         }
     }
@@ -387,23 +393,25 @@ public void cpuHard () {
         ImageView b6 = (ImageView) buttonList.get(6).getGraphic();
         ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
 
-        if (b0 != null && b4 != null && b8 == null) {
-            if (b0.getImage().equals(b4.getImage())) {
-                buttonList.get(8).fire();
+        if(!isX) {
+            if (b0 != null && b4 != null && b8 == null) {
+                if (b0.getImage().equals(b4.getImage())) {
+                    buttonList.get(8).fire();
+                }
             }
-        }
-        if (b4 != null && b8 != null && b0 == null) {
-            if (b4.getImage().equals(b8.getImage())) {
-                buttonList.get(0).fire();
+            if (b4 != null && b8 != null && b0 == null) {
+                if (b4.getImage().equals(b8.getImage())) {
+                    buttonList.get(0).fire();
+                }
             }
-        }
-        if (b6 != null && b4 != null && b2 == null) {
-            if (b6.getImage().equals(b4.getImage())) {
-                buttonList.get(2).fire();
+            if (b6 != null && b4 != null && b2 == null) {
+                if (b6.getImage().equals(b4.getImage())) {
+                    buttonList.get(2).fire();
+                }
             }
-        }
-        if(b2 != null && b4 != null & b6 == null){
-            buttonList.get(6).fire();
+            if (b2 != null && b4 != null & b6 == null) {
+                buttonList.get(6).fire();
+            }
         }
     }
 
@@ -419,49 +427,51 @@ public void cpuHard () {
         ImageView b7 = (ImageView) buttonList.get(7).getGraphic();
         ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
 
-        if (b0 != null && b1 != null && b2 == null) {
-            if (b0.getImage().equals(b1.getImage())) {
-                buttonList.get(2).fire();
+        if(!isX) {
+            if (b0 != null && b1 != null && b2 == null) {
+                if (b0.getImage().equals(b1.getImage())) {
+                    buttonList.get(2).fire();
+                }
             }
-        }
-        if (b1 != null && b2 != null && b0 == null) {
-            if (b1.getImage().equals(b2.getImage())) {
-                buttonList.get(0).fire();
+            if (b1 != null && b2 != null && b0 == null) {
+                if (b1.getImage().equals(b2.getImage())) {
+                    buttonList.get(0).fire();
+                }
             }
-        }
-        if (b0 != null && b2 != null && b1 == null) {
-            if (b0.getImage().equals(b2.getImage())) {
-                buttonList.get(1).fire();
+            if (b0 != null && b2 != null && b1 == null) {
+                if (b0.getImage().equals(b2.getImage())) {
+                    buttonList.get(1).fire();
+                }
             }
-        }
-        if (b3 != null && b4 != null && b5 == null) {
-            if (b3.getImage().equals(b4.getImage())) {
-                buttonList.get(5).fire();
+            if (b3 != null && b4 != null && b5 == null) {
+                if (b3.getImage().equals(b4.getImage())) {
+                    buttonList.get(5).fire();
+                }
             }
-        }
-        if (b4 != null && b5 != null && b3 == null) {
-            if (b4.getImage().equals(b5.getImage())) {
-                buttonList.get(3).fire();
+            if (b4 != null && b5 != null && b3 == null) {
+                if (b4.getImage().equals(b5.getImage())) {
+                    buttonList.get(3).fire();
+                }
             }
-        }
-        if (b3 != null && b5 != null && b4 == null) {
-            if (b3.getImage().equals(b5.getImage())) {
-                buttonList.get(3).fire();
+            if (b3 != null && b5 != null && b4 == null) {
+                if (b3.getImage().equals(b5.getImage())) {
+                    buttonList.get(3).fire();
+                }
             }
-        }
-        if (b6 != null && b7 != null && b8 == null) {
-            if (b6.getImage().equals(b7.getImage())) {
-                buttonList.get(8).fire();
+            if (b6 != null && b7 != null && b8 == null) {
+                if (b6.getImage().equals(b7.getImage())) {
+                    buttonList.get(8).fire();
+                }
             }
-        }
-        if (b7 != null && b8 != null && b6 == null) {
-            if (b7.getImage().equals(b8.getImage())) {
-                buttonList.get(8).fire();
+            if (b7 != null && b8 != null && b6 == null) {
+                if (b7.getImage().equals(b8.getImage())) {
+                    buttonList.get(8).fire();
+                }
             }
-        }
-        if (b6 != null && b8 != null && b7 == null) {
-            if (b6.getImage().equals(b8.getImage())) {
-                buttonList.get(8).fire();
+            if (b6 != null && b8 != null && b7 == null) {
+                if (b6.getImage().equals(b8.getImage())) {
+                    buttonList.get(8).fire();
+                }
             }
         }
     }
@@ -478,6 +488,7 @@ public void cpuHard () {
         ImageView b7 = (ImageView) buttonList.get(7).getGraphic();
         ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
 
+        if (!isX) {
             if (b0 != null && b3 != null && b6 == null) {
                 if (b0.getImage().equals(b3.getImage())) {
                     buttonList.get(6).fire();
@@ -524,6 +535,7 @@ public void cpuHard () {
                 }
             }
         }
+    }
 
     private void checkWin (){
         boolean isHorizontalWinner = checkHorizontal();
