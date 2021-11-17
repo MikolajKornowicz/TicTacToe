@@ -11,13 +11,11 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class TicTacToeApplication extends Application {
+
     private final Image bgImage = new Image("file:src/main/resources/background.jpg");
     private final Image x = new Image("file:src/main/resources/pngX.png");
     private final Image o = new Image("file:src/main/resources/pngO.png");
@@ -26,10 +24,14 @@ public class TicTacToeApplication extends Application {
     private final String singleString = "Single Player";
     private final String multiString = "Multi Player";
     private final String easyMode = "Easy Mode";
-    private final String HardMode = "Hard Mode";
-    private final String disabled = "Disabled";
+    private final String hardMode = "Hard Mode";
     private boolean singlePlayer = false;
+    private boolean hard = false;
+    private final String disabled = "Disabled";
     private List <Button> emptyButton = new LinkedList<>();
+    private int move = 0;
+    private Set <Button> corner = new HashSet<>();
+    private Set <Button> edge = new HashSet<>();
 
 
     public static void main(String[] args) {
@@ -79,9 +81,13 @@ public class TicTacToeApplication extends Application {
             primaryStage.close();
             Platform.runLater(() -> {
                 try {
+                    move = 0;
+                    hard = false;
                     isX = true;
                     emptyButton = new LinkedList<>();
                     buttonList = new ArrayList<>();
+                    corner = new HashSet<>();
+                    edge = new HashSet<>();
                     singlePlayer = false;
                     start(new Stage());
                 } catch (Exception e) {
@@ -104,10 +110,12 @@ public class TicTacToeApplication extends Application {
         mode.setOnAction(event -> {
             String activeString = mode.getText();
             if (activeString.equals(easyMode)) {
-                mode.setText(HardMode);
+                mode.setText(hardMode);
+                hard = true;
             }
-            if (activeString.equals(HardMode)) {
+            if (activeString.equals(hardMode)) {
                 mode.setText(easyMode);
+                hard = false;
             }
         });
         grid.add(mode, 5,3 );
@@ -152,12 +160,18 @@ public class TicTacToeApplication extends Application {
                         oView.setFitWidth(200);
                         button.setGraphic(oView);
                     }
+                    move ++;
                     isX = !isX;
                     button.setDisable(true);
                     emptyButton.remove(button);
                     checkWin();
                     checkDraw();
+                    System.out.println("Move: " + move);
+                    System.out.println("Corner List size: " + corner.size());
+                    System.out.println("Edge List size: " + edge.size());
                     cpuMove();
+                    cpuHard();
+
 
                 });
                 grid.add(button, i+1, j+1);
@@ -176,8 +190,64 @@ public class TicTacToeApplication extends Application {
         primaryStage.show();
 
     }
+
+
+    private void checker () {
+        ImageView button0 = (ImageView) buttonList.get(0).getGraphic();
+        ImageView button1 = (ImageView) buttonList.get(1).getGraphic();
+        ImageView button2 = (ImageView) buttonList.get(2).getGraphic();
+        ImageView button3 = (ImageView) buttonList.get(3).getGraphic();
+        ImageView button5 = (ImageView) buttonList.get(5).getGraphic();
+        ImageView button6 = (ImageView) buttonList.get(6).getGraphic();
+        ImageView button7 = (ImageView) buttonList.get(7).getGraphic();
+        ImageView button8 = (ImageView) buttonList.get(8).getGraphic();
+
+        Button b0 = buttonList.get(0);
+        Button b1 = buttonList.get(1);
+        Button b2 = buttonList.get(2);
+        Button b3 = buttonList.get(3);
+        Button b5 = buttonList.get(5);
+        Button b6 = buttonList.get(6);
+        Button b7 = buttonList.get(7);
+        Button b8 = buttonList.get(8);
+
+
+
+        if (button0 != null) {
+            corner.add(b1);
+            System.out.println(" Button 0 used: corner added 1");
+        }
+        if (button2 != null) {
+            corner.add(b2);
+            System.out.println("Button 2 used: corner added 2");
+        }
+        if (button6 != null) {
+            corner.add(b6);
+            System.out.println("Button 6 used: corner added 3");
+        }
+        if (button8 != null) {
+            corner.add(b8);
+            System.out.println("Button 8 used: corner added 4");
+        }
+        if(button1 != null){
+            edge.add(b1);
+            System.out.println("edge added 1");
+        }
+        if(button3 != null){
+            edge.add(b3);
+            System.out.println("edge added 2");
+        }
+        if(button5 != null){
+            edge.add(b5);
+            System.out.println("edge added 3");
+        }
+        if(button7 != null){
+            edge.add(b7);
+            System.out.println("edge added 4");
+        }
+    }
     private void cpuMove () {
-        if (!isX && singlePlayer) {
+        if (!isX && singlePlayer && !hard) {
             Random random = new Random();
             int index = random.nextInt(emptyButton.size());
             Button buttonToFire = emptyButton.get(index);
@@ -185,6 +255,275 @@ public class TicTacToeApplication extends Application {
         }
     }
 
+public void cpuHard () {
+    if (singlePlayer) {
+        if (!isX) {
+            if (hard) {
+                checker();
+
+                checkChanceVertically();
+                checkChanceDiagonal();
+                checkChanceHorizontally();
+
+
+                ImageView b0 = (ImageView) buttonList.get(0).getGraphic();
+                ImageView b1 = (ImageView) buttonList.get(1).getGraphic();
+                ImageView b2 = (ImageView) buttonList.get(2).getGraphic();
+                ImageView b3 = (ImageView) buttonList.get(3).getGraphic();
+                ImageView b4 = (ImageView) buttonList.get(4).getGraphic();
+                ImageView b5 = (ImageView) buttonList.get(5).getGraphic();
+                ImageView b6 = (ImageView) buttonList.get(6).getGraphic();
+                ImageView b7 = (ImageView) buttonList.get(7).getGraphic();
+                ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
+
+
+                if (move == 1 && edge.size() == 1) {
+                    buttonList.get(4).fire();
+                }
+                if (move == 1 && corner.size() <= 4) {
+                    buttonList.get(4).fire();
+                }
+                if (move == 1 && b4 != null) {
+                    Random random = new Random();
+                    int index = random.nextInt(4);
+                    if (index == 0) {
+                        buttonList.get(0).fire();
+                    }
+                    if (index == 1) {
+                        buttonList.get(2).fire();
+                    }
+                    if (index == 2) {
+                        buttonList.get(6).fire();
+                    }
+                    if (index == 3) {
+                        buttonList.get(8).fire();
+                    }
+                }
+                if (b4 != null && b4.getImage().equals(o)  && corner.size() == 2) {
+                    if (b0 != null && b2 != null) {
+                        buttonList.get(1).fire();
+                    }
+                    if (b0 != null && b6 != null) {
+                        buttonList.get(3).fire();
+                    }
+                    if (b0 != null && b8 != null) {
+                        buttonList.get(7).fire();
+                    }
+                    if (b2 != null && b8 != null) {
+                        buttonList.get(5).fire();
+                    }
+                    if (b2 != null && b6 != null) {
+                        buttonList.get(3).fire();
+                    }
+                    if (b6 != null && b8 != null) {
+                        buttonList.get(7).fire();
+                    }
+                }
+                if (b4 != null && b4.getImage().equals(o)  && corner.size() == 1 && edge.size() == 1) {
+                    if (b0 != null && b1 != null) {
+                        buttonList.get(2).fire();
+                    }
+                    if (b0 != null && b3 != null) {
+                        buttonList.get(6).fire();
+                    }
+                    if (b0 != null && b7 != null) {
+                        buttonList.get(3).fire();
+                    }
+                    if (b0 != null && b5 != null) {
+                        buttonList.get(1).fire();
+                    }
+                    if (b2 != null && b1 != null) {
+                        buttonList.get(0).fire();
+                    }
+                    if (b2 != null && b5 != null) {
+                        buttonList.get(8).fire();
+                    }
+                    if (b2 != null && b3 != null) {
+                        buttonList.get(0).fire();
+                    }
+                    if (b2 != null && b7 != null) {
+                        buttonList.get(8).fire();
+                    }
+                    if (b6 != null && b3 != null) {
+                        buttonList.get(0).fire();
+                    }
+                    if (b6 != null && b7 != null) {
+                        buttonList.get(8).fire();
+                    }
+                    if (b6 != null && b1 != null) {
+                        buttonList.get(0).fire();
+                    }
+                    if (b6 != null && b5 != null) {
+                        buttonList.get(8).fire();
+                    }
+                    if (b8 != null && b7 != null) {
+                        buttonList.get(6).fire();
+                    }
+                    if (b8 != null && b5 != null) {
+                        buttonList.get(2).fire();
+                    }
+                    if (b8 != null && b1 != null) {
+                        buttonList.get(2).fire();
+                    }
+                    if (b8 != null && b3 != null) {
+                        buttonList.get(6).fire();
+                    }
+                }
+                if(edge.size() == 2){
+                    buttonList.get(3).fire();
+                }
+
+                }
+            }
+        }
+    }
+
+
+    private void checkChanceDiagonal() {
+
+        ImageView b0 = (ImageView) buttonList.get(0).getGraphic();
+        ImageView b2 = (ImageView) buttonList.get(2).getGraphic();
+        ImageView b4 = (ImageView) buttonList.get(4).getGraphic();
+        ImageView b6 = (ImageView) buttonList.get(6).getGraphic();
+        ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
+
+        if (b0 != null && b4 != null && b8 == null) {
+            if (b0.getImage().equals(b4.getImage())) {
+                buttonList.get(8).fire();
+            }
+        }
+        if (b4 != null && b8 != null && b0 == null) {
+            if (b4.getImage().equals(b8.getImage())) {
+                buttonList.get(0).fire();
+            }
+        }
+        if (b6 != null && b4 != null && b2 == null) {
+            if (b6.getImage().equals(b4.getImage())) {
+                buttonList.get(2).fire();
+            }
+        }
+        if(b2 != null && b4 != null & b6 == null){
+            buttonList.get(6).fire();
+        }
+    }
+
+    private void checkChanceHorizontally (){
+
+        ImageView b0 = (ImageView) buttonList.get(0).getGraphic();
+        ImageView b1 = (ImageView) buttonList.get(1).getGraphic();
+        ImageView b2 = (ImageView) buttonList.get(2).getGraphic();
+        ImageView b3 = (ImageView) buttonList.get(3).getGraphic();
+        ImageView b4 = (ImageView) buttonList.get(4).getGraphic();
+        ImageView b5 = (ImageView) buttonList.get(5).getGraphic();
+        ImageView b6 = (ImageView) buttonList.get(6).getGraphic();
+        ImageView b7 = (ImageView) buttonList.get(7).getGraphic();
+        ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
+
+        if (b0 != null && b1 != null && b2 == null) {
+            if (b0.getImage().equals(b1.getImage())) {
+                buttonList.get(2).fire();
+            }
+        }
+        if (b1 != null && b2 != null && b0 == null) {
+            if (b1.getImage().equals(b2.getImage())) {
+                buttonList.get(0).fire();
+            }
+        }
+        if (b0 != null && b2 != null && b1 == null) {
+            if (b0.getImage().equals(b2.getImage())) {
+                buttonList.get(1).fire();
+            }
+        }
+        if (b3 != null && b4 != null && b5 == null) {
+            if (b3.getImage().equals(b4.getImage())) {
+                buttonList.get(5).fire();
+            }
+        }
+        if (b4 != null && b5 != null && b3 == null) {
+            if (b4.getImage().equals(b5.getImage())) {
+                buttonList.get(3).fire();
+            }
+        }
+        if (b3 != null && b5 != null && b4 == null) {
+            if (b3.getImage().equals(b5.getImage())) {
+                buttonList.get(3).fire();
+            }
+        }
+        if (b6 != null && b7 != null && b8 == null) {
+            if (b6.getImage().equals(b7.getImage())) {
+                buttonList.get(8).fire();
+            }
+        }
+        if (b7 != null && b8 != null && b6 == null) {
+            if (b7.getImage().equals(b8.getImage())) {
+                buttonList.get(8).fire();
+            }
+        }
+        if (b6 != null && b8 != null && b7 == null) {
+            if (b6.getImage().equals(b8.getImage())) {
+                buttonList.get(8).fire();
+            }
+        }
+    }
+
+    private void checkChanceVertically () {
+
+        ImageView b0 = (ImageView) buttonList.get(0).getGraphic();
+        ImageView b1 = (ImageView) buttonList.get(1).getGraphic();
+        ImageView b2 = (ImageView) buttonList.get(2).getGraphic();
+        ImageView b3 = (ImageView) buttonList.get(3).getGraphic();
+        ImageView b4 = (ImageView) buttonList.get(4).getGraphic();
+        ImageView b5 = (ImageView) buttonList.get(5).getGraphic();
+        ImageView b6 = (ImageView) buttonList.get(6).getGraphic();
+        ImageView b7 = (ImageView) buttonList.get(7).getGraphic();
+        ImageView b8 = (ImageView) buttonList.get(8).getGraphic();
+
+            if (b0 != null && b3 != null && b6 == null) {
+                if (b0.getImage().equals(b3.getImage())) {
+                    buttonList.get(6).fire();
+                }
+            }
+            if (b3 != null && b6 != null && b0 == null) {
+                if (b3.getImage().equals(b6.getImage())) {
+                    buttonList.get(0).fire();
+                }
+            }
+            if (b0 != null && b6 != null && b3 == null) {
+                if (b0.getImage().equals(b6.getImage())) {
+                    buttonList.get(3).fire();
+                }
+            }
+            if (b1 != null && b4 != null && b7 == null) {
+                if (b1.getImage().equals(b4.getImage())) {
+                    buttonList.get(7).fire();
+                }
+            }
+            if (b4 != null && b7 != null && b1 == null) {
+                if (b4.getImage().equals(b7.getImage())) {
+                    buttonList.get(1).fire();
+                }
+            }
+            if (b1 != null && b7 != null && b4 == null) {
+                if (b1.getImage().equals(b7.getImage())) {
+                    buttonList.get(4).fire();
+                }
+            }
+            if (b2 != null && b5 != null && b8 == null) {
+                if (b2.getImage().equals(b5.getImage())) {
+                    buttonList.get(8).fire();
+                }
+            }
+            if (b5 != null && b8 != null && b2 == null) {
+                if (b5.getImage().equals(b8.getImage())) {
+                    buttonList.get(2).fire();
+                }
+            }
+            if (b8 != null && b2 != null && b5 == null) {
+                if (b8.getImage().equals(b2.getImage())) {
+                    buttonList.get(5).fire();
+                }
+            }
+        }
 
     private void checkWin (){
         boolean isHorizontalWinner = checkHorizontal();
