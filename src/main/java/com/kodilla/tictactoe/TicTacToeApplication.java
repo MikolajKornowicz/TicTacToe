@@ -10,7 +10,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -32,6 +35,9 @@ public class TicTacToeApplication extends Application {
     private int move = 0;
     private Set <Button> corner = new HashSet<>();
     private Set <Button> edge = new HashSet<>();
+    private String saveGameFile = "output.txt";
+    private static final List <String> output = new ArrayList<>();
+
 
 
     public static void main(String[] args) {
@@ -81,6 +87,8 @@ public class TicTacToeApplication extends Application {
             primaryStage.close();
             Platform.runLater(() -> {
                 try {
+                    String text = !isX?"Wygrał X":"Wygrał O";
+                    output.add(text);
                     move = 0;
                     hard = false;
                     isX = true;
@@ -100,6 +108,20 @@ public class TicTacToeApplication extends Application {
         save.setStyle("-fx-background-color: white;");
         save.setPrefSize(100, 100);
         save.setText("Save Game");
+       save.setOnAction(event -> {
+           try {
+               FileWriter fileWriter = new FileWriter(saveGameFile);
+               for(String s : output) {
+                   fileWriter.write(s);
+                   fileWriter.write('\n');
+               }
+               fileWriter.close();
+           } catch (IOException e) {
+               e.printStackTrace();
+
+           }
+       });
+
         grid.add(save, 5,1 );
 
         Button mode = new Button();
@@ -118,7 +140,21 @@ public class TicTacToeApplication extends Application {
                 hard = false;
             }
         });
-        grid.add(mode, 5,3 );
+        grid.add(mode, 5, 3 );
+
+        Button ranking = new Button();
+        ranking.setStyle("-fx-background-color: white;");
+        ranking.setPrefSize(100, 100);
+        ranking.setText("Ranking");
+        ranking.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ranking");
+            alert.setHeaderText("Last Games");
+                alert.setContentText(output.stream().toString());
+                alert.showAndWait();
+
+        });
+        grid.add(ranking, 0,2 );
 
         Button type = new Button();
         type.setStyle("-fx-background-color: white;");
@@ -193,6 +229,7 @@ public class TicTacToeApplication extends Application {
     }
 
 
+
     private void checker () {
         ImageView button0 = (ImageView) buttonList.get(0).getGraphic();
         ImageView button1 = (ImageView) buttonList.get(1).getGraphic();
@@ -215,7 +252,7 @@ public class TicTacToeApplication extends Application {
 
 
         if (button0 != null) {
-            corner.add(b1);
+            corner.add(b0);
             System.out.println(" Button 0 used: corner added 1");
         }
         if (button2 != null) {
@@ -366,23 +403,34 @@ public void cpuHard () {
                         buttonList.get(6).fire();
                     }
                 }
-                if(move ==3 && edge.size() == 2){
-                    buttonList.get(3).fire();
+                if(move == 3 && edge.size() == 2){
+                    buttonList.get(8).fire();
                 }
                 if(b2 != null && b8 != null && b5 == null){
                     if(b2.getImage().equals(b8.getImage())){
                         buttonList.get(5).fire();
                     }
                 }
-
+                if(move == 7 && b0 != null && b1 != null && b5 != null && b6 != null) {
+                    if (b0.getImage().equals(x) && b1.getImage().equals(x) && b5.getImage().equals(x) && b6.getImage().equals(x)) {
+                        buttonList.get(7).fire();
+                    }
+                }
+                if(move == 5 && b2 != null && b3 != null && b8 != null){
+                    if(b2.getImage().equals(x) && b3.getImage().equals(x) && b8.getImage().equals(x)){
+                        buttonList.get(1).fire();
+                    }
+                }
                 checkChanceVertically();
                 checkChanceDiagonal();
                 checkChanceHorizontally();
 
+                }
+
             }
             }
         }
-    }
+
 
 
     private void checkChanceDiagonal() {
@@ -470,7 +518,7 @@ public void cpuHard () {
             }
             if (b6 != null && b8 != null && b7 == null) {
                 if (b6.getImage().equals(b8.getImage())) {
-                    buttonList.get(8).fire();
+                    buttonList.get(7).fire();
                 }
             }
         }
