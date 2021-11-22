@@ -1,0 +1,2 @@
+Powyższy projekt przedstawia grę kółko i krzyżyk. Gra posiada opcje gry dla dwóch osób oraz tryb pojedynczego gracza wraz z dwoma poziomami
+trudności łatwym oraz trudnym. Projekt powstał w oparciu o technologię Java FX.
