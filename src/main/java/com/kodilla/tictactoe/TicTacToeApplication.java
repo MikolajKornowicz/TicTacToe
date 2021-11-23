@@ -290,7 +290,7 @@ public class TicTacToeApplication extends Application {
                    opening();
                     //move 3
                    middleGame();
-                    //solving stalemate (no winning or loosing in 1 moves)
+                    //solving stalemate (no winning or loosing in 1 move)
                    staleMate();
                     //ending the game
                     checkChanceVertically();
